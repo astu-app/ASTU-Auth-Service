@@ -44,10 +44,21 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("ch.qos.logback:logback-classic:$logback_version")
+
+    implementation("dev.whyoleg.cryptography:cryptography-core:0.2.0")
+    implementation("dev.whyoleg.cryptography:cryptography-provider-jdk:0.2.0")
+
     implementation("io.ktor:ktor-client-logging-jvm:2.3.5")
     implementation("io.ktor:ktor-client-cio-jvm:2.3.5")
     implementation("io.ktor:ktor-client-okhttp-jvm:2.3.5")
     implementation("io.ktor:ktor-client-apache:2.3.5")
+    implementation("io.ktor:ktor-server-auth-jwt-jvm:2.3.5")
+
+    implementation("org.jetbrains.exposed:exposed-core:0.44.1")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.44.1")
+
+    implementation("org.postgresql:postgresql:42.2.2")
+
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 

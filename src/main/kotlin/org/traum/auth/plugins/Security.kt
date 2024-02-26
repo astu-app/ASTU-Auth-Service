@@ -7,15 +7,47 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.traum.auth.di.OAuth2Providers
-import org.traum.auth.di.Services
+import org.koin.ktor.ext.inject
+import org.traum.auth.di.*
+import org.traum.auth.enums.AvailableServices
 import org.traum.auth.plugins.extensions.checkOr
 import org.traum.auth.plugins.extensions.requireOr
-import org.koin.ktor.ext.inject
+import org.traum.auth.useCases.AppAuthInteractor
 
 fun Application.configureSecurity() {
     val oauthProviders by inject<OAuth2Providers>()
     val services by inject<Services>()
+    val jwtRegistration by inject<JWTRegistration>()
+    val appAuthInteractor = AppAuthInteractor()
+
+    with(jwtRegistration) {
+        authentication {
+            this.call("auth-jwt")
+        }
+    }
+
+    routing {
+        route("jwt/login") {
+            get {
+                val login = call.request.queryParameters["login"].toString()
+                val password = call.request.queryParameters["password"].toString()
+                val data = LoginData(login, password)
+                val token = appAuthInteractor.loginBasic(data)
+                call.respond(token)
+            }
+        }
+
+        route("jwt/registration") {
+            get {
+                val login = call.request.queryParameters["login"].toString()
+                val password = call.request.queryParameters["password"].toString()
+                val regData = RegistrationData(login, password)
+                val userData = UserData("name")
+                val token = appAuthInteractor.registrationBasic(regData, userData)
+                call.respond(token)
+            }
+        }
+    }
 
     oauthProviders.forEach { (name, provider) ->
         authentication {
@@ -51,7 +83,11 @@ fun Application.configureSecurity() {
                         }
 
                         runCatching { services[name]!!.fetchData(principal) }.onSuccess {
-                            call.respondText("${it.id}\n ${it.name}")
+                            val token = appAuthInteractor.registrationOAuth(
+                                OAuthRegistrationData("", it.id, AvailableServices.valueOf(name)),
+                                UserData(it.name)
+                            )
+                            call.respond(token)
                         }.onFailure {
                             call.respondText(it.toString())
                         }

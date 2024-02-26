@@ -1,11 +1,11 @@
 package org.traum.auth.plugins
 
 import io.ktor.server.application.*
+import org.koin.core.context.startKoin
 import org.traum.auth.di.initModule
-import org.koin.ktor.plugin.Koin
 
 fun Application.configureDI() {
-    install(Koin) {
+    startKoin {
         modules(
             this@configureDI.initModule()
         )

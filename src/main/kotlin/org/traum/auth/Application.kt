@@ -16,4 +16,3 @@ fun Application.module() {
     configureAdministration()
     configureRouting()
 }
-
