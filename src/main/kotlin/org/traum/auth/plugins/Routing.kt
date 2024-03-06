@@ -6,6 +6,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.traum.auth.useCases.JWTPayloadInteractor
 
 fun Application.configureRouting() {
     install(StatusPages) {
@@ -26,7 +27,19 @@ fun Application.configureRouting() {
             get("/secured") {
                 call.respondText("you have access to this resource")
             }
+        }
 
+        route("token/{token}") {
+            get("userId") {
+                val token = call.parameters["token"]
+                val userId = JWTPayloadInteractor().getUserId(token!!)
+
+                if (userId != null) {
+                    call.respond(userId)
+                }
+                else
+                    call.respond(HttpStatusCode.NotFound, "")
+            }
         }
     }
 }
