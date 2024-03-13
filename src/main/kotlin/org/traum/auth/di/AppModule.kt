@@ -68,12 +68,15 @@ fun Application.initModule(): Module {
     }
     val dbString =
         environment.config.propertyOrNull("db.connectionString")?.getString() ?: throw Exception("cannot init")
-
+    val dbUser =
+        environment.config.propertyOrNull("db.user")?.getString() ?: throw Exception("cannot init")
+    val dbPassword =
+        environment.config.propertyOrNull("db.password")?.getString() ?: throw Exception("cannot init")
     val database = Database.connect(
         url = dbString,
         driver = "org.postgresql.Driver",
-        user = "admin",
-        password = "admin"
+        user = dbUser,
+        password = dbPassword
     )
 
 

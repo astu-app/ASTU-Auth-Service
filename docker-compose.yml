@@ -19,6 +19,8 @@ services:
     image: astu/auth:v1
     environment:
       AUTH_DB_CONNECTION: jdbc:postgresql://authDB/authDB
+      AUTH_DB_USER: admin
+      AUTH_DB_PASSWORD: admin
     env_file:
       - .env
     ports:
