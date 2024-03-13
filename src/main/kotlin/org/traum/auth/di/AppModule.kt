@@ -69,10 +69,11 @@ fun Application.initModule(): Module {
     val dbString =
         environment.config.propertyOrNull("db.connectionString")?.getString() ?: throw Exception("cannot init")
 
-    println(dbString)
     val database = Database.connect(
         url = dbString,
-        driver = "org.postgresql.Driver"
+        driver = "org.postgresql.Driver",
+        user = "admin",
+        password = "admin"
     )
 
 
