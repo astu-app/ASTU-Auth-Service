@@ -66,13 +66,15 @@ fun Application.initModule(): Module {
             )
         Tokens(jwt.toString(), jwt.toString())
     }
+    val dbString =
+        environment.config.propertyOrNull("db.connectionString")?.getString() ?: throw Exception("cannot init")
 
+    println(dbString)
     val database = Database.connect(
-        "jdbc:postgresql://localhost:5432/test",
-        driver = "org.postgresql.Driver",
-        "admin",
-        "admin"
+        url = dbString,
+        driver = "org.postgresql.Driver"
     )
+
 
     val providers = OAuth2Providers(
         AvailableServices.Google.name.let { name ->
