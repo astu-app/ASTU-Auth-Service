@@ -65,3 +65,34 @@ dependencies {
     // Koin for Ktor
     implementation("io.insert-koin:koin-ktor:$koin_ktor")
 }
+
+
+tasks.register("buildDockerCompose") {
+    group = "docker"
+    dependsOn("buildFatJar")
+    doFirst {
+        exec {
+            executable = "docker"
+            args = listOf("compose", "down")
+        }
+        exec {
+            executable = "docker"
+            args = listOf("compose", "build")
+        }
+    }
+}
+tasks.register("runDockerCompose") {
+    group = "docker"
+    doFirst {
+        exec {
+            executable = "docker"
+            args = listOf("compose", "up", "-d")
+        }
+    }
+}
+tasks.register("buildAndRunDockerCompose") {
+    group = "docker"
+    dependsOn("buildDockerCompose")
+    dependsOn("runDockerCompose")
+}
+

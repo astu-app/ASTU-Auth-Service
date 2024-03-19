@@ -72,13 +72,11 @@ fun Application.initModule(): Module {
         environment.config.propertyOrNull("db.user")?.getString() ?: throw Exception("cannot init")
     val dbPassword =
         environment.config.propertyOrNull("db.password")?.getString() ?: throw Exception("cannot init")
+    val dbDriver =
+        environment.config.propertyOrNull("db.driver")?.getString() ?: throw Exception("cannot init")
     val database = Database.connect(
-        url = dbString,
-        driver = "org.postgresql.Driver",
-        user = dbUser,
-        password = dbPassword
+        url = dbString, driver = dbDriver, user = dbUser, password = dbPassword
     )
-
 
     val providers = OAuth2Providers(
         AvailableServices.Google.name.let { name ->
