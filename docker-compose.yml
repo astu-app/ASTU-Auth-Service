@@ -15,6 +15,7 @@ services:
 
   auth:
     container_name: authService
+    restart: always
     build: .
     image: astu/auth:v1
     environment:

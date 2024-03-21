@@ -1,0 +1,242 @@
+openapi: "3.0.3"
+info:
+  title: "AuthService API"
+  description: "Сервис авторизации пользователей"
+  version: "1.0.0"
+paths:
+  /token/{token}/userId:
+    get:
+      description: "Обмен токена на пользовательский идентификатор"
+      parameters:
+        - name: "token"
+          in: "path"
+          description: "Access токен пользователя"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+  /google/login:
+    get:
+      tags:
+        - Google
+      description: "Авторизация через google аккаунт"
+      responses:
+        "501":
+          description: "Not Implemented"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "not OAuth implemented service"
+        "401":
+          description: "Unauthorized"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "principal is null"
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tokens"
+  /google/registration:
+    get:
+      tags:
+        - Google
+      description: "Привязка пользователя с Google OAuth2"
+      responses:
+        "501":
+          description: "Not Implemented"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "not OAuth implemented service"
+        "401":
+          description: "Unauthorized"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "principal is null"
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tokens"
+  /yandex/login:
+    get:
+      tags:
+        - Yandex
+      description: "Авторизация через yandex аккаунт"
+      responses:
+        "501":
+          description: "Not Implemented"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "not OAuth implemented service"
+        "401":
+          description: "Unauthorized"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "principal is null"
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tokens"
+  /yandex/registration:
+    get:
+      tags:
+        - Yandex
+      description: "Привязка пользователя с Yandex OAuth2"
+      responses:
+        "501":
+          description: "Not Implemented"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "not OAuth implemented service"
+        "401":
+          description: "Unauthorized"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "principal is null"
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tokens"
+  /jwt/login:
+    post:
+      tags:
+        - JWT
+      description: "Авторизация с помощью JWT"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JWTLoginDTO"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tokens"
+  /jwt/registration:
+    post:
+      tags:
+        - JWT
+      description: "Регистрация через JWT"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JWTRegistrationDTO_UserData"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tokens"
+components:
+  schemas:
+    Tokens:
+      type: "object"
+      properties:
+        accessToken:
+          type: "string"
+        refreshToken:
+          type: "string"
+      required:
+        - "accessToken"
+        - "refreshToken"
+    JWTLoginDTO:
+      type: "object"
+      properties:
+        login:
+          type: "string"
+        password:
+          type: "string"
+      required:
+        - "login"
+        - "password"
+    UserData:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+      required:
+        - "name"
+    JWTRegistrationDTO:
+      type: "object"
+      properties:
+        login:
+          type: "string"
+        password:
+          type: "string"
+      required:
+        - "login"
+        - "password"
+        - "data"
+    JWTRegistrationDTO_UserData:
+      type: "object"
+      properties:
+        login:
+          type: "string"
+        password:
+          type: "string"
+        data:
+          $ref: "#/components/schemas/UserData"
+    Map:
+      type: "object"
+      properties: { }
+    Map_String:
+      type: "string"

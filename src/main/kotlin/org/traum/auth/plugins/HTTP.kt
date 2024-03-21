@@ -3,6 +3,7 @@ package org.traum.auth.plugins
 import io.ktor.server.application.*
 import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.server.plugins.httpsredirect.*
+import io.ktor.server.sessions.*
 
 fun Application.configureHTTP() {
     install(DefaultHeaders) {
@@ -15,5 +16,9 @@ fun Application.configureHTTP() {
         sslPort = 50001
         // 301 Moved Permanently, or 302 Found redirect.
         permanentRedirect = true
+    }
+
+    install(Sessions){
+        cookie<OAuthSession>("oauthSession", SessionStorageMemory())
     }
 }

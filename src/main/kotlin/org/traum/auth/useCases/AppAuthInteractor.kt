@@ -66,14 +66,14 @@ class AppAuthInteractor : IAppAuthInteractor, KoinComponent {
      * Registers a user
      */
     override fun registrationOAuth(oAuthData: OAuthRegistrationData, userData: UserData): Tokens {
-        val id = runCatching {
+        runCatching {
             authOAuthRepository.getUserIdByOAuthIdAndService(oAuthData.serviceId, oAuthData.service)
-        }.getOrElse {
+        }.onFailure {
             val userId = accountRepository.addAccountData(userData)
             authOAuthRepository.addAuthData(oAuthData.serviceId, userId, oAuthData.service)
-            userId
+            return jwtCreator.create(userId)
         }
-        return jwtCreator.create(id)
+        TODO("Account is already registered")
     }
 
     private suspend fun createHash(password: String, salt: String): String =
