@@ -43,6 +43,8 @@ dependencies {
     implementation("io.ktor:ktor-server-host-common-jvm")
     implementation("io.ktor:ktor-server-status-pages-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
+    implementation("io.ktor:ktor-server-cors:$ktor_version")
+
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
     implementation("dev.whyoleg.cryptography:cryptography-core:0.2.0")

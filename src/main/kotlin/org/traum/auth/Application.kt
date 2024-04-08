@@ -9,6 +9,7 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+3
     configureDI()
     configureSecurity()
     configureHTTP()
@@ -16,8 +17,4 @@ fun Application.module() {
     configureSerialization()
     configureAdministration()
     configureRouting()
-    val root = plugin(Routing)
-    root.getAllRoutes().flatMap { it.getAllRoutes() }.forEach {
-        println(it)
-    }
 }

@@ -56,7 +56,7 @@ class AppAuthInteractor : IAppAuthInteractor, KoinComponent {
     /**
      * Authorizes the user
      */
-    override fun loginOAuth(loginData: OAuthLoginData): Tokens {
+    override suspend fun loginOAuth(loginData: OAuthLoginData): Tokens {
         ///todo add cache
         val id = authOAuthRepository.getUserIdByOAuthIdAndService(loginData.id, loginData.service)
         return jwtCreator.create(id)
@@ -65,7 +65,7 @@ class AppAuthInteractor : IAppAuthInteractor, KoinComponent {
     /**
      * Registers a user
      */
-    override fun registrationOAuth(oAuthData: OAuthRegistrationData, userData: UserData): Tokens {
+    override suspend fun registrationOAuth(oAuthData: OAuthRegistrationData, userData: UserData): Tokens {
         runCatching {
             authOAuthRepository.getUserIdByOAuthIdAndService(oAuthData.serviceId, oAuthData.service)
         }.onFailure {

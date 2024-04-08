@@ -30,6 +30,68 @@ paths:
               examples:
                 Example#1:
                   value: ""
+  /token/{token}/userInfo:
+    get:
+      description: "Обмен токена на информацию о пользователе"
+      parameters:
+        - name: "token"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserInfo"
+  /user/info:
+    get:
+      description: "Получение информации о текущем пользователе"
+      responses:
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/UserInfo"
+  /users/info:
+    get:
+      description: "Получение информации пользователей"
+      responses:
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/UserInfo"
   /google/login:
     get:
       tags:
@@ -188,6 +250,16 @@ paths:
                 $ref: "#/components/schemas/Tokens"
 components:
   schemas:
+    UserInfo:
+      type: "object"
+      properties:
+        userId:
+          type: "string"
+        name:
+          type: "string"
+      required:
+        - "userId"
+        - "name"
     Tokens:
       type: "object"
       properties:

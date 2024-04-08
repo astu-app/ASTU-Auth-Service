@@ -6,6 +6,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
+import io.ktor.http.auth.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -51,7 +52,10 @@ fun Application.initModule(): Module {
                     .build()
             )
             validate { credential ->
-                if (credential.payload.audience.contains(jwtConfig.audience)) JWTPrincipal(credential.payload) else null
+                if (credential.payload.audience.contains(jwtConfig.audience))
+                    JWTPrincipal(credential.payload)
+                else
+                    null
             }
         }
     }

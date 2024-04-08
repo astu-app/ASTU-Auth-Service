@@ -1,6 +1,8 @@
 package org.traum.auth.plugins
 
+import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.server.plugins.httpsredirect.*
 import io.ktor.server.sessions.*
@@ -16,6 +18,17 @@ fun Application.configureHTTP() {
         sslPort = 50001
         // 301 Moved Permanently, or 302 Found redirect.
         permanentRedirect = true
+    }
+
+    install(CORS){
+        allowMethod(HttpMethod.Options)
+        allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Patch)
+        allowMethod(HttpMethod.Delete)
+        allowHeader(HttpHeaders.ContentType)
+        allowHeader(HttpHeaders.Authorization)
+        allowCredentials = true
+        anyHost()
     }
 
     install(Sessions){

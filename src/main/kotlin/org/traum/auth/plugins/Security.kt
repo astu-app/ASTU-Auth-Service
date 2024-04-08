@@ -16,12 +16,13 @@ import org.traum.auth.enums.AvailableServices
 import org.traum.auth.plugins.extensions.checkOr
 import org.traum.auth.plugins.extensions.requireOr
 import org.traum.auth.useCases.AppAuthInteractor
+import org.traum.auth.useCases.JWTPayloadInteractor
 
 @Serializable
 data class JWTLoginDTO(val login: String, val password: String)
 
 @Serializable
-data class JWTRegistrationDTO<T : Any>(val login: String, val password: String, val data: T)
+data class JWTRegistrationDTO(val login: String, val password: String, val data: UserData)
 
 data class OAuthSession(val isRegistration: Boolean, val values: Map<String, String>?)
 
@@ -38,22 +39,18 @@ fun Application.configureSecurity() {
     }
 
     routing {
-        route("jwt/login") {
-            post {
-                val dto = call.receive<JWTLoginDTO>()
-                val data = LoginData(dto.login, dto.password)
-                val token = appAuthInteractor.loginBasic(data)
-                call.respond(token)
-            }
+        post("jwt/login") {
+            val dto = call.receive<JWTLoginDTO>()
+            val data = LoginData(dto.login, dto.password)
+            val token = appAuthInteractor.loginBasic(data)
+            call.respond(token)
         }
 
-        route("jwt/registration") {
-            post {
-                val dto = call.receive<JWTRegistrationDTO<UserData>>()
-                val regData = RegistrationData(dto.login, dto.password)
-                val token = appAuthInteractor.registrationBasic(regData, dto.data)
-                call.respond(token)
-            }
+        post("jwt/registration") {
+            val dto = call.receive<JWTRegistrationDTO>()
+            val regData = RegistrationData(dto.login, dto.password)
+            val token = appAuthInteractor.registrationBasic(regData, dto.data)
+            call.respond(token)
         }
     }
 
@@ -73,16 +70,17 @@ fun Application.configureSecurity() {
                     call.respondRedirect("callback")
                 }
 
-                get("registration") {
-                    val id = call.request.queryParameters["userId"]!!
-                    call.sessions.set(OAuthSession(true, mapOf("id" to id)))
-                    call.respondRedirect("callback")
-                }
-
                 /**
                  * OAuth authorization result handler
                  */
                 authenticate("auth-oauth-$name") {
+                    get("registration") {
+                        val header = call.request.headers[HttpHeaders.Authorization]
+                        val id = JWTPayloadInteractor().getUserId(header!!)
+                        call.sessions.set(OAuthSession(true, mapOf("id" to id!!)))
+                        call.respondRedirect("callback")
+                    }
+
                     get("callback") {
                         val session = call.sessions.get<OAuthSession>()
                         checkOr(session != null) {

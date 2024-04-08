@@ -8,10 +8,10 @@ interface IOAuthInteractor<AuthResult, LoginData, RegistrationData, userData> {
     /**
      * Authorizes the user
      */
-    fun loginOAuth(loginData: LoginData): AuthResult
+    suspend fun loginOAuth(loginData: LoginData): AuthResult
 
     /**
      * Registers a user
      */
-    fun registrationOAuth(oAuthData: RegistrationData, userData: userData): AuthResult
+    suspend fun registrationOAuth(oAuthData: RegistrationData, userData: userData): AuthResult
 }
