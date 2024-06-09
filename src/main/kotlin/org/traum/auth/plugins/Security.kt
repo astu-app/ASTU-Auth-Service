@@ -17,12 +17,13 @@ import org.traum.auth.plugins.extensions.checkOr
 import org.traum.auth.plugins.extensions.requireOr
 import org.traum.auth.useCases.AppAuthInteractor
 import org.traum.auth.useCases.JWTPayloadInteractor
+import java.util.*
 
 @Serializable
 data class JWTLoginDTO(val login: String, val password: String)
 
 @Serializable
-data class JWTRegistrationDTO(val login: String, val password: String, val data: UserData)
+data class JWTRegistrationDTO(val login: String, val password: String, val userId: String)
 
 data class OAuthSession(val isRegistration: Boolean, val values: Map<String, String>?)
 
@@ -49,7 +50,7 @@ fun Application.configureSecurity() {
         post("jwt/registration") {
             val dto = call.receive<JWTRegistrationDTO>()
             val regData = RegistrationData(dto.login, dto.password)
-            val token = appAuthInteractor.registrationBasic(regData, dto.data)
+            val token = appAuthInteractor.registrationBasic(regData, UUID.fromString(dto.userId))
             call.respond(token)
         }
     }
@@ -118,7 +119,7 @@ fun Application.configureSecurity() {
                             }
                             appAuthInteractor.registrationOAuth(
                                 OAuthRegistrationData(userId, data.id, AvailableServices.valueOf(name)),
-                                UserData(data.name)
+                                UUID.fromString(userId)
                             )
                         } else
                             appAuthInteractor.loginOAuth(OAuthLoginData(data.id, AvailableServices.valueOf(name)))

@@ -8,7 +8,7 @@ class ServiceDbContext(private val db: Database) : IDbContext {
 
     object OAuth : Table("oauths") {
         val id: Column<UUID> = uuid("id").autoGenerate()
-        val accountId: Column<UUID> = (uuid("account_id") references Account.id)
+        val accountId: Column<UUID> = uuid("account_id")
 
         val serviceId: Column<String> = text("service_id")
         val service: Column<String> = text("service")
@@ -17,7 +17,7 @@ class ServiceDbContext(private val db: Database) : IDbContext {
     }
 
     object BasicAuth : Table("basic_auths") {
-        val accountId: Column<UUID> = (uuid("account_id") references Account.id)
+        val accountId: Column<UUID> = uuid("account_id")
 
         val login: Column<String> = text("login")
         val salt: Column<String> = text("salt")
@@ -26,17 +26,17 @@ class ServiceDbContext(private val db: Database) : IDbContext {
         override val primaryKey = PrimaryKey(login)
     }
 
-    object Account : Table("accounts") {
-        val id: Column<UUID> = uuid("id").autoGenerate()
-
-        val name: Column<String> = text("name")
-
-        override val primaryKey = PrimaryKey(id)
-    }
+//    object Account : Table("accounts") {
+//        val id: Column<UUID> = uuid("id").autoGenerate()
+//
+//        val name: Column<String> = text("name")
+//
+//        override val primaryKey = PrimaryKey(id)
+//    }
 
     init {
         transaction {
-            SchemaUtils.create(OAuth, Account, BasicAuth)
+            SchemaUtils.create(OAuth,  BasicAuth)
         }
     }
 

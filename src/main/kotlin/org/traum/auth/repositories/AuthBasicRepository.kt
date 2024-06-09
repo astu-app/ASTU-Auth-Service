@@ -35,12 +35,12 @@ class AuthBasicRepository : IAuthBasicRepository, KoinComponent {
         }
     }
 
-    override fun addAuthData(userId: String, login: String, passwordHash: String, salt: String): String {
+    override fun addAuthData(userId: UUID, login: String, passwordHash: String, salt: String): String {
         val basicAuth = ServiceDbContext.BasicAuth
         return serviceDbContext.transaction {
             basicAuth.insert {
                 it[this.salt] = salt
-                it[accountId] = UUID.fromString(userId)
+                it[accountId] = userId
                 it[this.hash] = passwordHash
                 it[this.login] = login
             } get basicAuth.login

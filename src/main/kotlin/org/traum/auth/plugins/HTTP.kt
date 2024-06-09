@@ -4,7 +4,6 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.defaultheaders.*
-import io.ktor.server.plugins.httpsredirect.*
 import io.ktor.server.sessions.*
 
 fun Application.configureHTTP() {
@@ -13,12 +12,12 @@ fun Application.configureHTTP() {
     }
 //    install(ForwardedHeaders) // WARNING: for security, do not include this if not behind a reverse proxy
 //    install(XForwardedHeaders) // WARNING: for security, do not include this if not behind a reverse proxy
-    install(HttpsRedirect) {
+//    install(HttpsRedirect) {
         // The port to redirect to. By default 443, the default HTTPS port.
-        sslPort = 50001
+//        sslPort = 50001
         // 301 Moved Permanently, or 302 Found redirect.
-        permanentRedirect = true
-    }
+//        permanentRedirect = true
+//    }
 
     install(CORS){
         allowMethod(HttpMethod.Options)

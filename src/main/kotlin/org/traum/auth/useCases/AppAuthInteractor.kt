@@ -6,14 +6,12 @@ import io.ktor.util.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.traum.auth.di.*
-import org.traum.auth.repositories.IAccountRepository
 import org.traum.auth.repositories.IAuthBasicRepository
 import org.traum.auth.repositories.IAuthOAuthRepository
 import java.util.*
 
 class AppAuthInteractor : IAppAuthInteractor, KoinComponent {
 
-    private val accountRepository: IAccountRepository<UserData> by inject()
     private val authOAuthRepository: IAuthOAuthRepository by inject()
     private val authBasicRepository: IAuthBasicRepository by inject()
     private val jwtCreator: JWTCreator<String, Tokens> by inject()
@@ -41,14 +39,13 @@ class AppAuthInteractor : IAppAuthInteractor, KoinComponent {
     /**
      * Registers a user based on registration data and user data
      */
-    override suspend fun registrationBasic(registrationData: RegistrationData, userData: UserData): Tokens {
+    override suspend fun registrationBasic(registrationData: RegistrationData, userData: UUID): Tokens {
         val id = runCatching { authBasicRepository.getUserIdByLogin(registrationData.login) }
             .getOrElse {
                 val salt = UUID.randomUUID().toString()
                 val passwordHash = createHash(registrationData.password, salt)
-                val userId = accountRepository.addAccountData(userData)
-                authBasicRepository.addAuthData(userId, registrationData.login, passwordHash, salt)
-                userId
+                authBasicRepository.addAuthData(userData, registrationData.login, passwordHash, salt)
+                userData.toString()
             }
         return jwtCreator.create(id)
     }
@@ -65,13 +62,12 @@ class AppAuthInteractor : IAppAuthInteractor, KoinComponent {
     /**
      * Registers a user
      */
-    override suspend fun registrationOAuth(oAuthData: OAuthRegistrationData, userData: UserData): Tokens {
+    override suspend fun registrationOAuth(oAuthData: OAuthRegistrationData, userData: UUID): Tokens {
         runCatching {
             authOAuthRepository.getUserIdByOAuthIdAndService(oAuthData.serviceId, oAuthData.service)
         }.onFailure {
-            val userId = accountRepository.addAccountData(userData)
-            authOAuthRepository.addAuthData(oAuthData.serviceId, userId, oAuthData.service)
-            return jwtCreator.create(userId)
+            authOAuthRepository.addAuthData(oAuthData.serviceId, userData.toString(), oAuthData.service)
+            return jwtCreator.create(userData.toString())
         }
         TODO("Account is already registered")
     }
