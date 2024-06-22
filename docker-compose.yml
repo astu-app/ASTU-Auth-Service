@@ -3,7 +3,7 @@ services:
   MyDB:
     container_name: authDB
     hostname: authDB
-    image: postgres
+    image: postgres:alpine
     networks:
       - auth-network
     ports:

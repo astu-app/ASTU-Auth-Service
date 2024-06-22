@@ -6,6 +6,7 @@ import io.ktor.util.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.traum.auth.di.*
+import org.traum.auth.exception.LoginFailedException
 import org.traum.auth.repositories.IAuthBasicRepository
 import org.traum.auth.repositories.IAuthOAuthRepository
 import java.util.*
@@ -24,7 +25,7 @@ class AppAuthInteractor : IAppAuthInteractor, KoinComponent {
         val (passwordHashInDb, salt) = runCatching {
             authBasicRepository.getPasswordAndSaltByLogin(loginData.login)
         }.getOrElse {
-            TODO("add exception for this case: NOT FOUND LOGIN")
+            throw LoginFailedException("Неправильный логин или пароль")
         }
 
         val passwordHash = createHash(loginData.password, salt)

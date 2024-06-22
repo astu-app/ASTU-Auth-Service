@@ -8,12 +8,16 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
+import org.traum.auth.exception.LoginFailedException
 import org.traum.auth.repositories.IAuthBasicRepository
 
 fun Application.configureRouting() {
     install(StatusPages) {
         exception<Throwable> { call, cause ->
             call.respondText(text = "500: $cause", status = HttpStatusCode.InternalServerError)
+        }
+        exception<LoginFailedException> { call, cause ->
+            call.respondText(text = "${cause.message}", status = HttpStatusCode.BadRequest)
         }
         unhandled { call ->
             call.respondText("\uD83D\uDC7A")

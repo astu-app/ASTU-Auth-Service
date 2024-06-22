@@ -5,11 +5,8 @@ import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.http.*
-import io.ktor.http.auth.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Database
@@ -23,16 +20,16 @@ import org.traum.auth.services.YandexOAuthService
  * Registering Objects for Dependency Injection
  */
 fun Application.initModule(): Module {
-    val oAuthClients = OAuthClients(
-        AvailableServices.Yandex.name to OAuthClient(
-            System.getenv("YANDEX_CLIENT_ID"),
-            System.getenv("YANDEX_CLIENT_SECRET")
-        ),
-        AvailableServices.Google.name to OAuthClient(
-            System.getenv("GOOGLE_CLIENT_ID"),
-            System.getenv("GOOGLE_CLIENT_SECRET")
-        )
-    )
+//    val oAuthClients = OAuthClients(
+//        AvailableServices.Yandex.name to OAuthClient(
+//            System.getenv("YANDEX_CLIENT_ID"),
+//            System.getenv("YANDEX_CLIENT_SECRET")
+//        ),
+//        AvailableServices.Google.name to OAuthClient(
+//            System.getenv("GOOGLE_CLIENT_ID"),
+//            System.getenv("GOOGLE_CLIENT_SECRET")
+//        )
+//    )
 
     val jwtConfig = JWTConfig(
         audience = environment.config.property("jwt.audience").getString(),
@@ -82,31 +79,31 @@ fun Application.initModule(): Module {
         url = dbString, driver = dbDriver, user = dbUser, password = dbPassword
     )
 
-    val providers = OAuth2Providers(
-        AvailableServices.Google.name.let { name ->
-            val client = oAuthClients.getOrElse(name) { throw Exception("not defined service: $name") }
-            name to OAuthServerSettings.OAuth2ServerSettings(
-                name = name,
-                authorizeUrl = "https://accounts.google.com/o/oauth2/auth",
-                accessTokenUrl = "https://accounts.google.com/o/oauth2/token",
-                requestMethod = HttpMethod.Post,
-                clientId = client.id,
-                clientSecret = client.secret,
-                defaultScopes = listOf("https://www.googleapis.com/auth/userinfo.profile"),
-            )
-        },
-        AvailableServices.Yandex.name.let { name ->
-            val client = oAuthClients.getOrElse(name) { throw Exception("not defined service: $name") }
-            name to OAuthServerSettings.OAuth2ServerSettings(
-                name = AvailableServices.Yandex.name,
-                authorizeUrl = "https://oauth.yandex.ru/authorize",
-                accessTokenUrl = "https://oauth.yandex.ru/token",
-                requestMethod = HttpMethod.Post,
-                clientId = client.id,
-                clientSecret = client.secret,
-            )
-        }
-    )
+//    val providers = OAuth2Providers(
+//        AvailableServices.Google.name.let { name ->
+//            val client = oAuthClients.getOrElse(name) { throw Exception("not defined service: $name") }
+//            name to OAuthServerSettings.OAuth2ServerSettings(
+//                name = name,
+//                authorizeUrl = "https://accounts.google.com/o/oauth2/auth",
+//                accessTokenUrl = "https://accounts.google.com/o/oauth2/token",
+//                requestMethod = HttpMethod.Post,
+//                clientId = client.id,
+//                clientSecret = client.secret,
+//                defaultScopes = listOf("https://www.googleapis.com/auth/userinfo.profile"),
+//            )
+//        },
+//        AvailableServices.Yandex.name.let { name ->
+//            val client = oAuthClients.getOrElse(name) { throw Exception("not defined service: $name") }
+//            name to OAuthServerSettings.OAuth2ServerSettings(
+//                name = AvailableServices.Yandex.name,
+//                authorizeUrl = "https://oauth.yandex.ru/authorize",
+//                accessTokenUrl = "https://oauth.yandex.ru/token",
+//                requestMethod = HttpMethod.Post,
+//                clientId = client.id,
+//                clientSecret = client.secret,
+//            )
+//        }
+//    )
 
     val httpClient = HttpClient(CIO) {
         install(ContentNegotiation) {
@@ -117,9 +114,9 @@ fun Application.initModule(): Module {
     }
 
     return module {
-        single { oAuthClients }
-
-        single { providers }
+//        single { oAuthClients }
+//
+//        single { providers }
 
         single { httpClient }
 
