@@ -1,6 +1,18 @@
+FROM gradle:8.1.1 AS BUILD
+LABEL authors="traum"
+
+WORKDIR /opt/app
+
+COPY . .
+
+RUN gradle :buildFatJar --no-daemon
+
 FROM eclipse-temurin:19-jre-alpine
 
-RUN mkdir /app
-COPY ./build/libs/*-all.jar /app/ktor-server.jar
-#COPY keystore.jks /./keystore.jks
-ENTRYPOINT ["java", "-jar", "/app/ktor-server.jar"]
+ARG JAR_FILE=/opt/app/build/libs/*-all.jar
+
+WORKDIR /opt/app
+
+COPY --from=BUILD ${JAR_FILE} app.jar
+
+ENTRYPOINT ["java","-jar","app.jar"]
