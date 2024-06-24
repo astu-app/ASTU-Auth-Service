@@ -20,7 +20,7 @@ services:
     hostname: auth_service
     restart: always
     build: .
-    image: astu/auth:v1
+    image: traumtoten/auth:v1
     environment:
       AUTH_DB_CONNECTION: jdbc:postgresql://authDB/authDB
       AUTH_DB_USER: admin
